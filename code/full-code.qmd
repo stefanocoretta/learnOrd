@@ -1,0 +1,50 @@
+---
+title: "learnOrd: Code"
+author: "Stefano Coretta"
+---
+
+```{r}
+#| label: setup
+
+library(tidyverse)
+library(brms)
+```
+
+```{r}
+emilian <- readRDS("data/emilianto.rds") |> 
+  filter(language == "Emilian") |> 
+  mutate(
+    age_c = age - mean(age),
+    speak_2 = ordered(speak_2)
+  )
+```
+
+```{r}
+get_prior(
+  speak_2 ~ education + gender + age_c,
+  family = cumulative,
+  data = emilian
+)
+```
+
+```{r}
+m1 <- brm(
+  speak_2 ~ cs(education) + cs(gender) + age_c,
+  family = acat,
+  data = emilian,
+  cores = 4,
+  seed = 7263,
+  file = "data/cache/m1"
+)
+```
+
+```{r}
+summary(m1)
+```
+
+```{r}
+conditional_effects(m1, effects = "gender", categorical = TRUE)
+conditional_effects(m1, effects = "education", categorical = TRUE)
+conditional_effects(m1, effects = "age_c", categorical = TRUE)
+```
+
