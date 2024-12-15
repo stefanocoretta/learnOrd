@@ -48,3 +48,19 @@ conditional_effects(m1, effects = "education", categorical = TRUE)
 conditional_effects(m1, effects = "age_c", categorical = TRUE)
 ```
 
+```{r}
+m2 <- brm(
+  speak_2 ~ cs(gender) + age_c,
+  family = acat,
+  data = emilian,
+  cores = 4,
+  seed = 7263,
+  file = "data/cache/m2"
+)
+```
+
+```{r}
+conditional_effects(m2, effects = "gender", categorical = TRUE)
+conditional_effects(m2, effects = "age_c", categorical = TRUE)
+```
+
