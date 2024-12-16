@@ -8,9 +8,95 @@ author: "Stefano Coretta"
 
 library(tidyverse)
 library(brms)
+library(HH)
+```
+
+## Acceptability ratings
+
+```{r}
+#| label: acceptability
+acceptability <- read_csv("https://osf.io/download/xmkvg/")
 ```
 
 ```{r}
+#| label: acc-bm-1
+
+acc_bm_1 <- brm(
+  Response ~ Condition + (Condition | Participant) + (1 | Item),
+  data = acceptability,
+  family = cumulative,
+  cores = 4,
+  seed = 7823,
+  file = "data/cache/acc_bm_1"
+)
+```
+
+```{r}
+#| label: acc-bm-1-summ
+summary(acc_bm_1)
+```
+
+```{r}
+#| label: acc-bm-1-cond
+conditional_effects(acc_bm_1, categorical = TRUE)
+```
+
+```{r}
+#| label: acc-bm-2
+
+acc_bm_2 <- brm(
+  Response ~ cs(Condition) + (Condition | Participant) + (1 | Item),
+  data = acceptability,
+  family = acat,
+  cores = 4,
+  seed = 7823,
+  file = "data/cache/acc_bm_2"
+)
+```
+
+```{r}
+#| label: acc-bm-2-summ
+summary(acc_bm_2)
+```
+
+```{r}
+#| label: acc-bm-2-cond
+conditional_effects(acc_bm_2, categorical = TRUE)
+```
+
+## Proficiency
+
+```{r}
+#| label: proficiency
+proficiency <- read_csv("https://osf.io/download/4j3r2/") |> 
+  mutate(
+    Response = ordered(Response, levels = c("functional", "good", "very good", "nativelike"))
+  )
+```
+
+```{r}
+#| label: pro-bm-1
+pro_bm_1 <- brm(
+  Response ~ AoA,
+  data = proficiency,
+  family = cumulative,
+  cores = 4,
+  seed = 3546,
+  file = "data/cache/pro_bm_1"
+)
+```
+
+```{r}
+#| label: pro-bm-1-cond
+conditional_effects(pro_bm_1, categorical = TRUE)
+```
+
+
+
+## Emilian speaking competence
+
+```{r}
+#| label: emilian
 emilian <- readRDS("data/emilianto.rds") |> 
   filter(language == "Emilian") |> 
   mutate(
@@ -20,47 +106,27 @@ emilian <- readRDS("data/emilianto.rds") |>
 ```
 
 ```{r}
-get_prior(
-  speak_2 ~ education + gender + age_c,
-  family = cumulative,
-  data = emilian
-)
-```
-
-```{r}
-m1 <- brm(
+#| label: emi_bm_1
+emi_bm_1 <- brm(
   speak_2 ~ cs(education) + cs(gender) + age_c,
   family = acat,
   data = emilian,
   cores = 4,
   seed = 7263,
-  file = "data/cache/m1"
+  file = "data/cache/emi_bm_1"
 )
 ```
 
 ```{r}
-summary(m1)
+#| label: emi-bm-1-summ
+summary(emi_bm_1)
 ```
 
 ```{r}
-conditional_effects(m1, effects = "gender", categorical = TRUE)
-conditional_effects(m1, effects = "education", categorical = TRUE)
-conditional_effects(m1, effects = "age_c", categorical = TRUE)
+#| label: emi-bm-1-cond
+conditional_effects(emi_bm_1, effects = "gender", categorical = TRUE)
+conditional_effects(emi_bm_1, effects = "education", categorical = TRUE)
+conditional_effects(emi_bm_1, effects = "age_c", categorical = TRUE)
 ```
 
-```{r}
-m2 <- brm(
-  speak_2 ~ cs(gender) + age_c,
-  family = acat,
-  data = emilian,
-  cores = 4,
-  seed = 7263,
-  file = "data/cache/m2"
-)
-```
-
-```{r}
-conditional_effects(m2, effects = "gender", categorical = TRUE)
-conditional_effects(m2, effects = "age_c", categorical = TRUE)
-```
 
