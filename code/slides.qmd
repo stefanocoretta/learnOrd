@@ -1,0 +1,71 @@
+---
+title: "Ordinal regression models for Likert/rating scales data"
+author: "Dr Stefano Coretta"
+institute: "University of Edinburgh"
+date: "2025/01/23"
+format: 
+  mono-light-revealjs:
+    theme: [default, "custom.scss"]
+    history: false
+filters:
+  - tachyonsextra
+execute: 
+  echo: true
+---
+
+```{r setup, include=FALSE}
+options(ggplot2.discrete.fill = RColorBrewer::brewer.pal(8, "Dark2"))
+options(ggplot2.discrete.colour = RColorBrewer::brewer.pal(8, "Dark2"))
+
+library(tidyverse)
+theme_set(theme_minimal())
+library(HH)
+```
+
+## Ordinal data
+
+```{r}
+#| label: acceptability
+#| message: false
+
+acceptability <- read_csv("https://osf.io/download/xmkvg/")
+```
+
+```{r}
+acceptability_lik <- acceptability |>
+  # we count the numbers for each Condition and Response combo
+  count(Condition, Response) |>
+  # then we pivot so that the data is wider, with columns for condition and 
+  # each of the 7 values for the Response
+  pivot_wider(names_from = "Response", values_from = n)
+acceptability_lik
+```
+
+## Diverging stacked bar chart
+
+```{r}
+#| label: accept-likert
+#| echo: false
+
+HH::likert(
+  Condition ~ .,
+  acceptability_lik,
+  as.percent = TRUE,
+  main = "Acceptability ratings by sentence condition"
+)
+```
+
+## Modelling acceptability
+
+```{r}
+#| label: acc-bm-1
+
+acc_bm_1 <- brm(
+  Response ~ Condition + (Condition | Participant) + (1 | Item),
+  data = acceptability,
+  family = cumulative,
+  cores = 4,
+  seed = 7823,
+  file = "data/cache/acc_bm_1"
+)
+```
