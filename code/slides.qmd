@@ -20,6 +20,7 @@ options(ggplot2.discrete.colour = RColorBrewer::brewer.pal(8, "Dark2"))
 library(tidyverse)
 theme_set(theme_minimal())
 library(HH)
+library(brms)
 ```
 
 ## Ordinal data
@@ -32,6 +33,7 @@ acceptability <- read_csv("https://osf.io/download/xmkvg/")
 ```
 
 ```{r}
+#| label: acceptability-lik
 acceptability_lik <- acceptability |>
   # we count the numbers for each Condition and Response combo
   count(Condition, Response) |>
@@ -68,4 +70,37 @@ acc_bm_1 <- brm(
   seed = 7823,
   file = "data/cache/acc_bm_1"
 )
+```
+
+## Modelling acceptability: summary
+
+```{r}
+#| label: acc-bm-1-sum
+summary(acc_bm_1)
+```
+
+## Modelling acceptability: regression coefficients
+
+```{r}
+#| label: acc-bm-1-fixef
+fixef(acc_bm_1)
+```
+
+. . .
+
+::: box-note
+-   Each "intercept" is the estimated threshold between the Nth level and the following level, on the latent standard Gaussian distribution.
+
+<!-- -->
+
+-   `Conditionnoncaconical` indicates how the acceptability scores differ in the non-canonical condition relative to the canonical one on the latent Gaussian distribution. Negative values indicate lower acceptability.
+:::
+
+## Modelling acceptability: predicted acceptability
+
+```{r}
+#| label: acc-bm-1-cond
+
+conditional_effects(acc_bm_1, categorical = TRUE)
+
 ```
