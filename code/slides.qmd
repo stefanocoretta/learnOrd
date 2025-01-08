@@ -13,7 +13,11 @@ execute:
   echo: true
 ---
 
-```{r setup, include=FALSE}
+## Ordinal data
+
+```{r}
+#| label: setup
+#| include: false
 options(ggplot2.discrete.fill = RColorBrewer::brewer.pal(8, "Dark2"))
 options(ggplot2.discrete.colour = RColorBrewer::brewer.pal(8, "Dark2"))
 
@@ -22,8 +26,6 @@ theme_set(theme_minimal())
 library(HH)
 library(brms)
 ```
-
-## Ordinal data
 
 ```{r}
 #| label: acceptability
@@ -65,7 +67,7 @@ HH::likert(
 acc_bm_1 <- brm(
   Response ~ Condition + (Condition | Participant) + (1 | Item),
   data = acceptability,
-  family = cumulative,
+  family = cumulative("probit"),
   cores = 4,
   seed = 7823,
   file = "data/cache/acc_bm_1"
@@ -89,12 +91,28 @@ fixef(acc_bm_1)
 . . .
 
 ::: box-note
--   Each "intercept" is the estimated threshold between the Nth level and the following level, on the latent standard Gaussian distribution.
+-   Each "intercept" is the estimated threshold between the Nth category and the following category, on the latent standard Gaussian distribution.
 
-<!-- -->
+    $$
+    Pr(Y = k) = \Phi(\tau_k) - \Phi(\tau_{k-1})
+    $$
 
--   `Conditionnoncaconical` indicates how the acceptability scores differ in the non-canonical condition relative to the canonical one on the latent Gaussian distribution. Negative values indicate lower acceptability.
+-   `Conditionnoncaconical` indicates how the acceptability scores differ in the non-canonical condition relative to the canonical one on the latent Gaussian distribution.
+
+-   Negative values of `Conditionnoncaconical` indicate lower acceptability.
 :::
+
+## Modelling acceptability: Cumulative Distribution Function
+
+```{r}
+#| label: acc-bm-1-fixef-2
+acc_bm_1_fixef <- fixef(acc_bm_1)
+acc_bm_1_fixef
+```
+
+```{r}
+
+```
 
 ## Modelling acceptability: predicted acceptability
 
@@ -102,5 +120,64 @@ fixef(acc_bm_1)
 #| label: acc-bm-1-cond
 
 conditional_effects(acc_bm_1, categorical = TRUE)
+
+```
+
+## Category-specific effects
+
+::: box-tip
+-   Cumulative models assume a single latent variable.
+
+-   Moreover, there is only one parameter for `Condition` which shifts the entire latent variable but does not allow for rating-category-specific differences.
+
+-   We can use adjacent category models with category-specific effects.
+:::
+
+## Category-specific effects: fit adjacent category model
+
+```{r}
+#| label: acc-bm-2
+
+acc_bm_2 <- brm(
+  Response ~ cs(Condition) + (Condition | Participant) + (1 | Item),
+  data = acceptability,
+  family = acat("probit"),
+  cores = 4,
+  seed = 7823,
+  file = "data/cache/acc_bm_2"
+)
+```
+
+## Category-specific effects: model summary
+
+```{r}
+#| label: acc-bm-2-fixef
+
+acc_bm_2_fixef <- fixef(acc_bm_2)
+acc_bm_2_fixef
+```
+
+::: box-note
+-   Each "intercept" is the threshold between the Nth level and the following level.
+
+    $$
+    Pr(Y = k|Y \in { k, k + 1 }) = \Phi(\tau_k)
+    $$
+
+-   Now, `Condition` has one coefficient per rating-category.
+:::
+
+## Category-specific effects: predicted probabilities
+
+```{r}
+#| label: acc-bm-2-cond
+
+conditional_effects(acc_bm_2, categorical = TRUE)
+
+```
+
+## Category-specific effects
+
+```{r}
 
 ```

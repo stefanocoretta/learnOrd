@@ -572,6 +572,17 @@
       ],
       "Hash": "61e097f35917d342622f21cdc79c256e"
     },
+    "collapse": {
+      "Package": "collapse",
+      "Version": "2.0.18",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "R",
+        "Rcpp"
+      ],
+      "Hash": "1c8dff92ef021ec9e59930041f967758"
+    },
     "colorspace": {
       "Package": "colorspace",
       "Version": "2.1-1",
@@ -1223,6 +1234,19 @@
       ],
       "Hash": "e53e635cd18fc8b0d82f2896517ac786"
     },
+    "insight": {
+      "Package": "insight",
+      "Version": "1.0.0",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "R",
+        "methods",
+        "stats",
+        "utils"
+      ],
+      "Hash": "bee0c3abb5eea6c4170ea2a7c334893f"
+    },
     "interp": {
       "Package": "interp",
       "Version": "1.1-6",
@@ -1430,6 +1454,24 @@
         "R"
       ],
       "Hash": "7ce2733a9826b3aeb1775d56fd305472"
+    },
+    "marginaleffects": {
+      "Package": "marginaleffects",
+      "Version": "0.24.0",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "R",
+        "Rcpp",
+        "RcppEigen",
+        "checkmate",
+        "data.table",
+        "generics",
+        "insight",
+        "methods",
+        "rlang"
+      ],
+      "Hash": "7af7304ff5710a9c59053da0f92a0e48"
     },
     "matrixStats": {
       "Package": "matrixStats",

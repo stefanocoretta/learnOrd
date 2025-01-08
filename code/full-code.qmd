@@ -24,7 +24,7 @@ acceptability <- read_csv("https://osf.io/download/xmkvg/")
 acc_bm_1 <- brm(
   Response ~ Condition + (Condition | Participant) + (1 | Item),
   data = acceptability,
-  family = cumulative,
+  family = cumulative("probit"),
   cores = 4,
   seed = 7823,
   file = "data/cache/acc_bm_1"
@@ -47,7 +47,7 @@ conditional_effects(acc_bm_1, categorical = TRUE)
 acc_bm_2 <- brm(
   Response ~ cs(Condition) + (Condition | Participant) + (1 | Item),
   data = acceptability,
-  family = acat,
+  family = acat("probit"),
   cores = 4,
   seed = 7823,
   file = "data/cache/acc_bm_2"
@@ -79,7 +79,7 @@ proficiency <- read_csv("https://osf.io/download/4j3r2/") |>
 pro_bm_1 <- brm(
   Response ~ AoA,
   data = proficiency,
-  family = cumulative,
+  family = cumulative("probit"),
   cores = 4,
   seed = 3546,
   file = "data/cache/pro_bm_1"
@@ -109,7 +109,7 @@ emilian <- readRDS("data/emilianto.rds") |>
 #| label: emi_bm_1
 emi_bm_1 <- brm(
   speak_2 ~ cs(education) + cs(gender) + age_c,
-  family = acat,
+  family = acat("probit"),
   data = emilian,
   cores = 4,
   seed = 7263,
