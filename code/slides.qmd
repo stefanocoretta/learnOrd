@@ -176,8 +176,57 @@ conditional_effects(acc_bm_2, categorical = TRUE)
 
 ```
 
-## Category-specific effects
+## Language proficiency
 
 ```{r}
+#| label: proficiency
 
+proficiency <- read_csv("https://osf.io/download/4j3r2/") |> 
+  mutate(
+    Response = ordered(Response, levels = c("functional", "good", "very good", "nativelike"))
+  )
+
+proficiency
+```
+
+## Language proficiency: plot
+
+```{r}
+#| label: proficiency-plot
+
+proficiency |>
+  ggplot(aes(AoA)) +
+  geom_histogram(binwidth = 2)
+  
+```
+
+## Language proficiency: fit model
+
+```{r}
+#| label: pro-bm-1
+
+pro_bm_1 <- brm(
+  Response ~ AoA,
+  data = proficiency,
+  family = cumulative("probit"),
+  cores = 4,
+  seed = 3546,
+  file = "data/cache/pro_bm_1"
+)
+```
+
+## Language proficiency: model summary
+
+```{r}
+#| label: pro-bm-1-sum
+
+summary(pro_bm_1)
+
+```
+
+## Language proficiency: expected predictions
+
+```{r}
+#| label: pro-bm-1-cond
+conditional_effects(pro_bm_1, categorical = TRUE)
 ```

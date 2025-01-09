@@ -91,8 +91,6 @@ pro_bm_1 <- brm(
 conditional_effects(pro_bm_1, categorical = TRUE)
 ```
 
-
-
 ## Emilian speaking competence
 
 ```{r}
@@ -128,5 +126,3 @@ conditional_effects(emi_bm_1, effects = "gender", categorical = TRUE)
 conditional_effects(emi_bm_1, effects = "education", categorical = TRUE)
 conditional_effects(emi_bm_1, effects = "age_c", categorical = TRUE)
 ```
-
-
