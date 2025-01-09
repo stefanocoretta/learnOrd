@@ -32,10 +32,14 @@ library(brms)
 #| message: false
 
 acceptability <- read_csv("https://osf.io/download/xmkvg/")
+acceptability
 ```
+
+## Process data for plotting
 
 ```{r}
 #| label: acceptability-lik
+
 acceptability_lik <- acceptability |>
   # we count the numbers for each Condition and Response combo
   count(Condition, Response) |>
@@ -59,7 +63,23 @@ HH::likert(
 )
 ```
 
-## Modelling acceptability
+## Ordinal variables are categorical
+
+::: box-note
+-   Methods for continuous variables are not appropriate ([Liddell and Kruschke 2018](https://doi.org/10.1016/j.jesp.2018.08.009), [Bürkner and Vuorre 2019](https://doi.org/10.1177/2515245918823199), [Verissimo 2021](https:// doi.org/10.1017/S1366728921000316)).
+
+-   Ordinal regression models are a solution.
+:::
+
+## Ordinal variables are categorical: Gaussian regression fails
+
+![](/img/ordinal-metric.png){fig-align="center" width="500"}
+
+## Cumulative ordinal regression models
+
+![](https://solomonkurz.netlify.app/blog/2021-12-29-notes-on-the-bayesian-cumulative-probit/index_files/figure-html/unnamed-chunk-10-1.png){fig-align="center" width="500"}
+
+## Modelling acceptability with a cumulative ordinal model
 
 ```{r}
 #| label: acc-bm-1
@@ -102,18 +122,6 @@ fixef(acc_bm_1)
 -   Negative values of `Conditionnoncaconical` indicate lower acceptability.
 :::
 
-## Modelling acceptability: Cumulative Distribution Function
-
-```{r}
-#| label: acc-bm-1-fixef-2
-acc_bm_1_fixef <- fixef(acc_bm_1)
-acc_bm_1_fixef
-```
-
-```{r}
-
-```
-
 ## Modelling acceptability: predicted acceptability
 
 ```{r}
@@ -154,7 +162,7 @@ acc_bm_2 <- brm(
 #| label: acc-bm-2-fixef
 
 acc_bm_2_fixef <- fixef(acc_bm_2)
-acc_bm_2_fixef
+round(acc_bm_2_fixef, 2)
 ```
 
 ::: box-note
@@ -165,6 +173,8 @@ acc_bm_2_fixef
     $$
 
 -   Now, `Condition` has one coefficient per rating-category.
+
+-   For example, `Conditionnoncanonical[6]` with a 95% CrI \[-0.53, -0.13\] indicates that in the non-canonical condition, participants favour "7" over "6" *less* than in the canonical condition.
 :::
 
 ## Category-specific effects: predicted probabilities
@@ -230,3 +240,117 @@ summary(pro_bm_1)
 #| label: pro-bm-1-cond
 conditional_effects(pro_bm_1, categorical = TRUE)
 ```
+
+## A slightly more complex example: Emilian proficiency
+
+```{r}
+#| label: emilian
+emilian <- readRDS("data/emilianto.rds") |> 
+  filter(language == "Emilian") |> 
+  mutate(
+    age_c = age - mean(age),
+    speak_2 = ordered(speak_2)
+  )
+emilian |> dplyr::select(age, age_c, education, gender, speak_2)
+```
+
+## Emilian speaking competence: prepare data
+
+```{r}
+#| label: emilian-lik
+emilian_lik_gen <- emilian |>
+  count(gender, speak_2) |>
+  pivot_wider(names_from = "speak_2", values_from = n)
+emilian_lik_ed <- emilian |>
+  count(education, speak_2) |>
+  pivot_wider(names_from = "speak_2", values_from = n)
+```
+
+## Emilian speaking competence by gender
+
+```{r}
+#| label: emilian-lik-gender
+#| echo: false
+
+HH::likert(
+  gender ~ .,
+  emilian_lik_gen,
+  as.percent = TRUE,
+  main = "Speaking proficiency of Emilian by gender"
+)
+
+```
+
+## Emilian speaking competence by education
+
+```{r}
+#| label: emilian-lik-ed
+#| echo: false
+
+HH::likert(
+  education ~ .,
+  emilian_lik_ed,
+  as.percent = TRUE,
+  main = "Speaking proficiency of Emilian by education"
+)
+```
+
+## Age of participants
+
+```{r}
+#| label: emilian-age
+
+emilian |> 
+  ggplot(aes(age)) +
+  geom_histogram(binwidth = 5)
+
+```
+
+## Fit model
+
+```{r}
+#| label: emi_bm_1
+emi_bm_1 <- brm(
+  speak_2 ~ cs(education) + cs(gender) + age_c,
+  family = acat("probit"),
+  data = emilian,
+  cores = 4,
+  seed = 7263,
+  file = "data/cache/emi_bm_1"
+)
+```
+
+## Model summary
+
+```{r}
+#| label: emi-bm-1-sum
+summary(emi_bm_1)
+```
+
+## Expected probabilities by gender
+
+```{r}
+conditional_effects(emi_bm_1, effects = "gender", categorical = TRUE)
+```
+
+## Expected probabilities by education
+
+```{r}
+conditional_effects(emi_bm_1, effects = "education", categorical = TRUE)
+```
+
+## Expected probabilities by age
+
+```{r}
+conditional_effects(emi_bm_1, effects = "age_c", categorical = TRUE)
+```
+
+## Resources
+
+::: box-note
+-   Bürkner, Paul-Christian, and Matti Vuorre. ‘Ordinal Regression Models in Psychology: A Tutorial’. Advances in Methods and Practices in Psychological Science 2, no. 1 (2019): 77–101. <https://doi.org/10.1177/2515245918823199.>
+
+-   Verissimo, Joao. ‘Analysis of Rating Scales: A Pervasive Problem in Bilingualism Research and a Solution with Bayesian Ordinal Models’. Bilingualism: Language and Cognition 24, no. 5 (2021): 842–48. <https://doi.org/10.1017/S1366728921000316.>
+
+-   [Notes on the Bayesian cumulative probit](https://solomonkurz.netlify.app/blog/2021-12-29-notes-on-the-bayesian-cumulative-probit/)
+:::
