@@ -1,0 +1,1144 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-html/tabby.min.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/light-border.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-549806ee2085284f45b00abea8c6df48.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-contrib/tachyonsextra-0.0.1/tachyonsextra.css" rel="stylesheet"><meta charset="utf-8">
+  <meta name="generator" content="quarto-1.6.40">
+
+  <meta name="author" content="Dr Stefano Coretta">
+  <meta name="dcterms.date" content="2025-01-23">
+  <title>learnOrd – Ordinal regression models for Likert/rating scales data</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="../site_libs/revealjs/dist/reset.css">
+  <link rel="stylesheet" href="../site_libs/revealjs/dist/reveal.css">
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+      vertical-align: middle;
+    }
+    /* CSS for syntax highlighting */
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      { color: #003b4f; background-color: #f1f3f5; }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span { color: #003b4f; } /* Normal */
+    code span.al { color: #ad0000; } /* Alert */
+    code span.an { color: #5e5e5e; } /* Annotation */
+    code span.at { color: #657422; } /* Attribute */
+    code span.bn { color: #ad0000; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #003b4f; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #20794d; } /* Char */
+    code span.cn { color: #8f5902; } /* Constant */
+    code span.co { color: #5e5e5e; } /* Comment */
+    code span.cv { color: #5e5e5e; font-style: italic; } /* CommentVar */
+    code span.do { color: #5e5e5e; font-style: italic; } /* Documentation */
+    code span.dt { color: #ad0000; } /* DataType */
+    code span.dv { color: #ad0000; } /* DecVal */
+    code span.er { color: #ad0000; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #ad0000; } /* Float */
+    code span.fu { color: #4758ab; } /* Function */
+    code span.im { color: #00769e; } /* Import */
+    code span.in { color: #5e5e5e; } /* Information */
+    code span.kw { color: #003b4f; font-weight: bold; } /* Keyword */
+    code span.op { color: #5e5e5e; } /* Operator */
+    code span.ot { color: #003b4f; } /* Other */
+    code span.pp { color: #ad0000; } /* Preprocessor */
+    code span.sc { color: #5e5e5e; } /* SpecialChar */
+    code span.ss { color: #20794d; } /* SpecialString */
+    code span.st { color: #20794d; } /* String */
+    code span.va { color: #111111; } /* Variable */
+    code span.vs { color: #20794d; } /* VerbatimString */
+    code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="../site_libs/revealjs/dist/theme/quarto-203bff9a918f8383e7ce8e0eac244cb0.css">
+  <link href="../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
+  <link href="../site_libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
+  <link href="../site_libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
+  <link href="../site_libs/revealjs/plugin/quarto-support/footer.css" rel="stylesheet">
+  <style type="text/css">
+    .reveal div.sourceCode {
+      margin: 0;
+      overflow: auto;
+    }
+    .reveal div.hanging-indent {
+      margin-left: 1em;
+      text-indent: -1em;
+    }
+    .reveal .slide:not(.center) {
+      height: 100%;
+    }
+    .reveal .slide.scrollable {
+      overflow-y: auto;
+    }
+    .reveal .footnotes {
+      height: 100%;
+      overflow-y: auto;
+    }
+    .reveal .slide .absolute {
+      position: absolute;
+      display: block;
+    }
+    .reveal .footnotes ol {
+      counter-reset: ol;
+      list-style-type: none; 
+      margin-left: 0;
+    }
+    .reveal .footnotes ol li:before {
+      counter-increment: ol;
+      content: counter(ol) ". "; 
+    }
+    .reveal .footnotes ol li > p:first-child {
+      display: inline-block;
+    }
+    .reveal .slide ul,
+    .reveal .slide ol {
+      margin-bottom: 0.5em;
+    }
+    .reveal .slide ul li,
+    .reveal .slide ol li {
+      margin-top: 0.4em;
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide ul[role="tablist"] li {
+      margin-bottom: 0;
+    }
+    .reveal .slide ul li > *:first-child,
+    .reveal .slide ol li > *:first-child {
+      margin-block-start: 0;
+    }
+    .reveal .slide ul li > *:last-child,
+    .reveal .slide ol li > *:last-child {
+      margin-block-end: 0;
+    }
+    .reveal .slide .columns:nth-child(3) {
+      margin-block-start: 0.8em;
+    }
+    .reveal blockquote {
+      box-shadow: none;
+    }
+    .reveal .tippy-content>* {
+      margin-top: 0.2em;
+      margin-bottom: 0.7em;
+    }
+    .reveal .tippy-content>*:last-child {
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide > img.stretch.quarto-figure-center,
+    .reveal .slide > img.r-stretch.quarto-figure-center {
+      display: block;
+      margin-left: auto;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-left,
+    .reveal .slide > img.r-stretch.quarto-figure-left  {
+      display: block;
+      margin-left: 0;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-right,
+    .reveal .slide > img.r-stretch.quarto-figure-right  {
+      display: block;
+      margin-left: auto;
+      margin-right: 0; 
+    }
+  </style>
+</head>
+<body class="quarto-light">
+  <div class="reveal">
+    <div class="slides">
+
+<section id="title-slide" data-background="var(--inverse)" class="quarto-title-block center">
+  <h1 class="title">Ordinal regression models for Likert/rating scales data</h1>
+
+<div class="quarto-title-authors">
+<div class="quarto-title-author">
+<div class="quarto-title-author-name">
+Dr Stefano Coretta 
+</div>
+        <p class="quarto-title-affiliation">
+            University of Edinburgh
+          </p>
+    </div>
+</div>
+
+  <p class="date">2025-01-23</p>
+</section>
+<section id="ordinal-data" class="slide level2">
+<h2>Ordinal data</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a></a>acceptability <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"https://osf.io/download/xmkvg/"</span>)</span>
+<span id="cb1-2"><a></a>acceptability <span class="sc">|&gt;</span> <span class="fu">select</span>(Participant, Condition, Response)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1,176 × 3
+   Participant Condition    Response
+   &lt;chr&gt;       &lt;chr&gt;           &lt;dbl&gt;
+ 1 g1          canonical           7
+ 2 g1          noncanonical        7
+ 3 g1          canonical           7
+ 4 g1          noncanonical        7
+ 5 g1          canonical           7
+ 6 g1          noncanonical        6
+ 7 g1          canonical           7
+ 8 g1          noncanonical        7
+ 9 g1          canonical           6
+10 g1          noncanonical        7
+# ℹ 1,166 more rows</code></pre>
+</div>
+</div>
+</section>
+<section id="process-data-for-plotting" class="slide level2">
+<h2>Process data for plotting</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a></a>acceptability_lik <span class="ot">&lt;-</span> acceptability <span class="sc">|&gt;</span></span>
+<span id="cb3-2"><a></a>  <span class="co"># we count the numbers for each Condition and Response combo</span></span>
+<span id="cb3-3"><a></a>  <span class="fu">count</span>(Condition, Response) <span class="sc">|&gt;</span></span>
+<span id="cb3-4"><a></a>  <span class="co"># then we pivot so that the data is wider, with columns for condition and </span></span>
+<span id="cb3-5"><a></a>  <span class="co"># each of the 7 values for the Response</span></span>
+<span id="cb3-6"><a></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> <span class="st">"Response"</span>, <span class="at">values_from =</span> n)</span>
+<span id="cb3-7"><a></a>acceptability_lik</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 8
+  Condition      `1`   `2`   `3`   `4`   `5`   `6`   `7`
+  &lt;chr&gt;        &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt;
+1 canonical        2     6     4    25    42   164   345
+2 noncanonical     8    25    22    46    88   157   242</code></pre>
+</div>
+</div>
+</section>
+<section id="diverging-stacked-bar-chart" class="slide level2">
+<h2>Diverging stacked bar chart</h2>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a></a>HH<span class="sc">::</span><span class="fu">likert</span>(</span>
+<span id="cb5-2"><a></a>  Condition <span class="sc">~</span> .,</span>
+<span id="cb5-3"><a></a>  acceptability_lik,</span>
+<span id="cb5-4"><a></a>  <span class="at">as.percent =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb5-5"><a></a>  <span class="at">main =</span> <span class="st">"Acceptability ratings by sentence condition"</span></span>
+<span id="cb5-6"><a></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+
+</div>
+<img data-src="slides_files/figure-revealjs/accept-likert-1.png" class="quarto-figure quarto-figure-center r-stretch" width="960"></section>
+<section id="ordinal-variables-are-categorical" class="slide level2">
+<h2>Ordinal variables are categorical</h2>
+<div class="box-note">
+<ul>
+<li><p>Methods for continuous variables are not appropriate (<a href="https://doi.org/10.1016/j.jesp.2018.08.009">Liddell and Kruschke 2018</a>, <a href="https://doi.org/10.1177/2515245918823199">Bürkner and Vuorre 2019</a>, <a href="https://%20doi.org/10.1017/S1366728921000316">Verissimo 2021</a>).</p></li>
+<li><p>Ordinal regression models are a solution.</p></li>
+</ul>
+</div>
+</section>
+<section id="ordinal-variables-are-categorical-gaussian-regression-fails" class="slide level2">
+<h2>Ordinal variables are categorical: Gaussian regression fails</h2>
+
+<img data-src="../img/ordinal-metric.png" class="quarto-figure quarto-figure-center r-stretch" width="500"></section>
+<section id="cumulative-ordinal-regression-models" class="slide level2">
+<h2>Cumulative ordinal regression models</h2>
+
+<img data-src="https://solomonkurz.netlify.app/blog/2021-12-29-notes-on-the-bayesian-cumulative-probit/index_files/figure-html/unnamed-chunk-10-1.png" class="quarto-figure quarto-figure-center r-stretch" width="500"></section>
+<section id="modelling-acceptability-with-a-cumulative-ordinal-model" class="slide level2">
+<h2>Modelling acceptability with a cumulative ordinal model</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a></a>acc_bm_1 <span class="ot">&lt;-</span> <span class="fu">brm</span>(</span>
+<span id="cb6-2"><a></a>  Response <span class="sc">~</span> Condition <span class="sc">+</span> (Condition <span class="sc">|</span> Participant) <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> Item),</span>
+<span id="cb6-3"><a></a>  <span class="at">data =</span> acceptability,</span>
+<span id="cb6-4"><a></a>  <span class="at">family =</span> <span class="fu">cumulative</span>(<span class="st">"probit"</span>),</span>
+<span id="cb6-5"><a></a>  <span class="at">cores =</span> <span class="dv">4</span>,</span>
+<span id="cb6-6"><a></a>  <span class="at">seed =</span> <span class="dv">7823</span>,</span>
+<span id="cb6-7"><a></a>  <span class="at">file =</span> <span class="st">"data/cache/acc_bm_1"</span></span>
+<span id="cb6-8"><a></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="modelling-acceptability-summary" class="slide level2">
+<h2>Modelling acceptability: summary</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a></a><span class="fu">summary</span>(acc_bm_1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> Family: cumulative 
+  Links: mu = probit; disc = identity 
+Formula: Response ~ Condition + (Condition | Participant) + (1 | Item) 
+   Data: acceptability (Number of observations: 1176) 
+  Draws: 4 chains, each with iter = 2000; warmup = 1000; thin = 1;
+         total post-warmup draws = 4000
+
+Multilevel Hyperparameters:
+~Item (Number of levels: 28) 
+              Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
+sd(Intercept)     0.36      0.07     0.25     0.50 1.00     1430     1825
+
+~Participant (Number of levels: 42) 
+                                     Estimate Est.Error l-95% CI u-95% CI Rhat
+sd(Intercept)                            0.89      0.13     0.68     1.18 1.00
+sd(Conditionnoncanonical)                0.33      0.13     0.05     0.57 1.00
+cor(Intercept,Conditionnoncanonical)    -0.20      0.32    -0.76     0.49 1.00
+                                     Bulk_ESS Tail_ESS
+sd(Intercept)                             805     1735
+sd(Conditionnoncanonical)                 596      528
+cor(Intercept,Conditionnoncanonical)     1823     1347
+
+Regression Coefficients:
+                      Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS
+Intercept[1]             -3.50      0.22    -3.94    -3.09 1.00      903
+Intercept[2]             -2.81      0.19    -3.18    -2.45 1.00      825
+Intercept[3]             -2.49      0.18    -2.86    -2.14 1.00      803
+Intercept[4]             -1.96      0.18    -2.32    -1.62 1.00      752
+Intercept[5]             -1.36      0.17    -1.70    -1.04 1.01      722
+Intercept[6]             -0.33      0.17    -0.65    -0.01 1.01      699
+Conditionnoncanonical    -0.70      0.09    -0.89    -0.53 1.00     2456
+                      Tail_ESS
+Intercept[1]              1876
+Intercept[2]              1444
+Intercept[3]              1444
+Intercept[4]              1475
+Intercept[5]              1350
+Intercept[6]              1575
+Conditionnoncanonical     2602
+
+Further Distributional Parameters:
+     Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
+disc     1.00      0.00     1.00     1.00   NA       NA       NA
+
+Draws were sampled using sampling(NUTS). For each parameter, Bulk_ESS
+and Tail_ESS are effective sample size measures, and Rhat is the potential
+scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
+</div>
+</div>
+</section>
+<section id="modelling-acceptability-regression-coefficients" class="slide level2">
+<h2>Modelling acceptability: regression coefficients</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a></a><span class="fu">fixef</span>(acc_bm_1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                        Estimate  Est.Error       Q2.5       Q97.5
+Intercept[1]          -3.5026028 0.21929110 -3.9384487 -3.08514908
+Intercept[2]          -2.8072746 0.18963455 -3.1834800 -2.44661624
+Intercept[3]          -2.4948545 0.18212668 -2.8573013 -2.14070922
+Intercept[4]          -1.9616831 0.17659995 -2.3177691 -1.62034369
+Intercept[5]          -1.3619645 0.17027364 -1.7022029 -1.04122602
+Intercept[6]          -0.3252862 0.16589856 -0.6470002 -0.00858996
+Conditionnoncanonical -0.7023993 0.09175824 -0.8880742 -0.52622744</code></pre>
+</div>
+</div>
+<div class="fragment">
+<div class="box-note">
+<ul>
+<li><p>Each “intercept” is the estimated threshold between the Nth category and the following category, on the latent standard Gaussian distribution.</p>
+<p><span class="math display">\[
+Pr(Y = k) = \Phi(\tau_k) - \Phi(\tau_{k-1})
+\]</span></p></li>
+<li><p><code>Conditionnoncaconical</code> indicates how the acceptability scores differ in the non-canonical condition relative to the canonical one on the latent Gaussian distribution.</p></li>
+<li><p>Negative values of <code>Conditionnoncaconical</code> indicate lower acceptability.</p></li>
+</ul>
+</div>
+</div>
+</section>
+<section id="modelling-acceptability-predicted-acceptability" class="slide level2">
+<h2>Modelling acceptability: predicted acceptability</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a></a><span class="fu">conditional_effects</span>(acc_bm_1, <span class="at">categorical =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+
+</div>
+<img data-src="slides_files/figure-revealjs/acc-bm-1-cond-1.png" width="960" class="r-stretch"></section>
+<section id="category-specific-effects" class="slide level2">
+<h2>Category-specific effects</h2>
+<div class="box-tip">
+<ul>
+<li><p>Cumulative models assume a single latent variable.</p></li>
+<li><p>Moreover, there is only one parameter for <code>Condition</code> which shifts the entire latent variable but does not allow for rating-category-specific differences.</p></li>
+<li><p>We can use adjacent category models with category-specific effects.</p></li>
+</ul>
+</div>
+</section>
+<section id="category-specific-effects-fit-adjacent-category-model" class="slide level2">
+<h2>Category-specific effects: fit adjacent category model</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a></a>acc_bm_2 <span class="ot">&lt;-</span> <span class="fu">brm</span>(</span>
+<span id="cb12-2"><a></a>  Response <span class="sc">~</span> <span class="fu">cs</span>(Condition) <span class="sc">+</span> (Condition <span class="sc">|</span> Participant) <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> Item),</span>
+<span id="cb12-3"><a></a>  <span class="at">data =</span> acceptability,</span>
+<span id="cb12-4"><a></a>  <span class="at">family =</span> <span class="fu">acat</span>(<span class="st">"probit"</span>),</span>
+<span id="cb12-5"><a></a>  <span class="at">cores =</span> <span class="dv">4</span>,</span>
+<span id="cb12-6"><a></a>  <span class="at">seed =</span> <span class="dv">7823</span>,</span>
+<span id="cb12-7"><a></a>  <span class="at">file =</span> <span class="st">"data/cache/acc_bm_2"</span></span>
+<span id="cb12-8"><a></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="category-specific-effects-model-summary" class="slide level2">
+<h2>Category-specific effects: model summary</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a></a>acc_bm_2_fixef <span class="ot">&lt;-</span> <span class="fu">fixef</span>(acc_bm_2)</span>
+<span id="cb13-2"><a></a><span class="fu">round</span>(acc_bm_2_fixef, <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                         Estimate Est.Error  Q2.5 Q97.5
+Intercept[1]                -1.43      0.49 -2.45 -0.51
+Intercept[2]                -0.62      0.38 -1.34  0.12
+Intercept[3]                -1.65      0.29 -2.22 -1.09
+Intercept[4]                -0.85      0.19 -1.22 -0.48
+Intercept[5]                -1.12      0.15 -1.42 -0.84
+Intercept[6]                -0.46      0.11 -0.68 -0.23
+Conditionnoncanonical[1]    -0.14      0.54 -1.24  0.87
+Conditionnoncanonical[2]    -0.14      0.41 -0.93  0.67
+Conditionnoncanonical[3]    -0.78      0.32 -1.41 -0.16
+Conditionnoncanonical[4]    -0.17      0.21 -0.58  0.24
+Conditionnoncanonical[5]    -0.69      0.15 -0.98 -0.41
+Conditionnoncanonical[6]    -0.33      0.10 -0.53 -0.13</code></pre>
+</div>
+</div>
+<div class="box-note">
+<ul>
+<li><p>Each “intercept” is the threshold between the Nth level and the following level.</p>
+<p><span class="math display">\[
+P(Y = k \mid \eta) = \frac{\exp\left(\sum_{j=1}^{k-1} (\eta - \tau_j)\right)}{\sum_{r=1}^{K+1} \exp\left(\sum_{j=1}^{r-1} (\eta - \tau_j)\right)}
+\]</span></p></li>
+<li><p>Now, <code>Condition</code> has one coefficient per rating-category.</p></li>
+<li><p>For example, <code>Conditionnoncanonical[6]</code> with a 95% CrI [-0.53, -0.13] indicates that in the non-canonical condition, participants favour “7” over “6” <em>less</em> than in the canonical condition.</p></li>
+</ul>
+</div>
+</section>
+<section id="category-specific-effects-predicted-probabilities" class="slide level2">
+<h2>Category-specific effects: predicted probabilities</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a></a><span class="fu">conditional_effects</span>(acc_bm_2, <span class="at">categorical =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+
+</div>
+<img data-src="slides_files/figure-revealjs/acc-bm-2-cond-1.png" width="960" class="r-stretch"></section>
+<section id="language-proficiency" class="slide level2">
+<h2>Language proficiency</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a></a>proficiency <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"https://osf.io/download/4j3r2/"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb16-2"><a></a>  <span class="fu">mutate</span>(</span>
+<span id="cb16-3"><a></a>    <span class="at">Response =</span> <span class="fu">ordered</span>(Response, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"functional"</span>, <span class="st">"good"</span>, <span class="st">"very good"</span>, <span class="st">"nativelike"</span>))</span>
+<span id="cb16-4"><a></a>  )</span>
+<span id="cb16-5"><a></a></span>
+<span id="cb16-6"><a></a>proficiency</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 55 × 3
+   Participant Response     AoA
+   &lt;chr&gt;       &lt;ord&gt;      &lt;dbl&gt;
+ 1 BLP523      very good     19
+ 2 CCZ257      very good     17
+ 3 DSY144      nativelike     7
+ 4 FLP885      good          18
+ 5 GFJ452      very good     19
+ 6 GLF239      nativelike    10
+ 7 GNB157      nativelike     7
+ 8 GPR735      good          10
+ 9 GWL482      very good     17
+10 GZV988      nativelike    12
+# ℹ 45 more rows</code></pre>
+</div>
+</div>
+</section>
+<section id="language-proficiency-plot" class="slide level2">
+<h2>Language proficiency: plot</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a></a>proficiency <span class="sc">|&gt;</span></span>
+<span id="cb18-2"><a></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(AoA)) <span class="sc">+</span></span>
+<span id="cb18-3"><a></a>  <span class="fu">geom_histogram</span>(<span class="at">binwidth =</span> <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+
+</div>
+<img data-src="slides_files/figure-revealjs/proficiency-plot-1.png" width="960" class="r-stretch"></section>
+<section id="language-proficiency-fit-model" class="slide level2">
+<h2>Language proficiency: fit model</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a></a>pro_bm_1 <span class="ot">&lt;-</span> <span class="fu">brm</span>(</span>
+<span id="cb19-2"><a></a>  Response <span class="sc">~</span> AoA,</span>
+<span id="cb19-3"><a></a>  <span class="at">data =</span> proficiency,</span>
+<span id="cb19-4"><a></a>  <span class="at">family =</span> <span class="fu">cumulative</span>(<span class="st">"probit"</span>),</span>
+<span id="cb19-5"><a></a>  <span class="at">cores =</span> <span class="dv">4</span>,</span>
+<span id="cb19-6"><a></a>  <span class="at">seed =</span> <span class="dv">3546</span>,</span>
+<span id="cb19-7"><a></a>  <span class="at">file =</span> <span class="st">"data/cache/pro_bm_1"</span></span>
+<span id="cb19-8"><a></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="language-proficiency-model-summary" class="slide level2">
+<h2>Language proficiency: model summary</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a></a><span class="fu">summary</span>(pro_bm_1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> Family: cumulative 
+  Links: mu = probit; disc = identity 
+Formula: Response ~ AoA 
+   Data: proficiency (Number of observations: 55) 
+  Draws: 4 chains, each with iter = 2000; warmup = 1000; thin = 1;
+         total post-warmup draws = 4000
+
+Regression Coefficients:
+             Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
+Intercept[1]    -4.40      0.65    -5.73    -3.20 1.00     1701     1460
+Intercept[2]    -2.62      0.51    -3.63    -1.64 1.00     2317     2172
+Intercept[3]    -1.41      0.43    -2.27    -0.56 1.00     3079     2983
+AoA             -0.15      0.03    -0.22    -0.09 1.00     2486     2289
+
+Further Distributional Parameters:
+     Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
+disc     1.00      0.00     1.00     1.00   NA       NA       NA
+
+Draws were sampled using sampling(NUTS). For each parameter, Bulk_ESS
+and Tail_ESS are effective sample size measures, and Rhat is the potential
+scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
+</div>
+</div>
+</section>
+<section id="language-proficiency-expected-predictions" class="slide level2">
+<h2>Language proficiency: expected predictions</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a></a><span class="fu">conditional_effects</span>(pro_bm_1, <span class="at">categorical =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+
+</div>
+<img data-src="slides_files/figure-revealjs/pro-bm-1-cond-1.png" width="960" class="r-stretch"></section>
+<section id="a-slightly-more-complex-example-emilian-proficiency" class="slide level2">
+<h2>A slightly more complex example: Emilian proficiency</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a></a>emilian <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">"data/emilianto.rds"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb23-2"><a></a>  <span class="fu">filter</span>(language <span class="sc">==</span> <span class="st">"Emilian"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb23-3"><a></a>  <span class="fu">mutate</span>(</span>
+<span id="cb23-4"><a></a>    <span class="at">age_c =</span> age <span class="sc">-</span> <span class="fu">mean</span>(age),</span>
+<span id="cb23-5"><a></a>    <span class="at">speak_2 =</span> <span class="fu">ordered</span>(speak_2)</span>
+<span id="cb23-6"><a></a>  )</span>
+<span id="cb23-7"><a></a>emilian <span class="sc">|&gt;</span> dplyr<span class="sc">::</span><span class="fu">select</span>(age, age_c, education, gender, speak_2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 434 × 5
+     age  age_c education      gender speak_2   
+   &lt;dbl&gt;  &lt;dbl&gt; &lt;fct&gt;          &lt;chr&gt;  &lt;ord&gt;     
+ 1    57  23.5  Primary/Middle M      very well 
+ 2    20 -13.5  Secondary      F      so and so 
+ 3    50  16.5  Secondary      M      very well 
+ 4    25  -8.46 Bachelor       F      not at all
+ 5    65  31.5  Primary/Middle M      very well 
+ 6    56  22.5  Secondary      F      very well 
+ 7    62  28.5  Secondary      M      very well 
+ 8    65  31.5  Masters+       M      very well 
+ 9    63  29.5  Primary/Middle F      very well 
+10    61  27.5  Primary/Middle M      well      
+# ℹ 424 more rows</code></pre>
+</div>
+</div>
+</section>
+<section id="emilian-speaking-competence-prepare-data" class="slide level2">
+<h2>Emilian speaking competence: prepare data</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a></a>emilian_lik_gen <span class="ot">&lt;-</span> emilian <span class="sc">|&gt;</span></span>
+<span id="cb25-2"><a></a>  <span class="fu">count</span>(gender, speak_2) <span class="sc">|&gt;</span></span>
+<span id="cb25-3"><a></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> <span class="st">"speak_2"</span>, <span class="at">values_from =</span> n)</span>
+<span id="cb25-4"><a></a>emilian_lik_ed <span class="ot">&lt;-</span> emilian <span class="sc">|&gt;</span></span>
+<span id="cb25-5"><a></a>  <span class="fu">count</span>(education, speak_2) <span class="sc">|&gt;</span></span>
+<span id="cb25-6"><a></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> <span class="st">"speak_2"</span>, <span class="at">values_from =</span> n)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="emilian-speaking-competence-by-gender" class="slide level2">
+<h2>Emilian speaking competence by gender</h2>
+
+<img data-src="slides_files/figure-revealjs/emilian-lik-gender-1.png" width="960" class="r-stretch"></section>
+<section id="emilian-speaking-competence-by-education" class="slide level2">
+<h2>Emilian speaking competence by education</h2>
+
+<img data-src="slides_files/figure-revealjs/emilian-lik-ed-1.png" width="960" class="r-stretch"></section>
+<section id="age-of-participants" class="slide level2">
+<h2>Age of participants</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a></a>emilian <span class="sc">|&gt;</span> </span>
+<span id="cb26-2"><a></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(age)) <span class="sc">+</span></span>
+<span id="cb26-3"><a></a>  <span class="fu">geom_histogram</span>(<span class="at">binwidth =</span> <span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+
+</div>
+<img data-src="slides_files/figure-revealjs/emilian-age-1.png" width="960" class="r-stretch"></section>
+<section id="fit-model" class="slide level2">
+<h2>Fit model</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a></a>emi_bm_1 <span class="ot">&lt;-</span> <span class="fu">brm</span>(</span>
+<span id="cb27-2"><a></a>  speak_2 <span class="sc">~</span> <span class="fu">cs</span>(education) <span class="sc">+</span> <span class="fu">cs</span>(gender) <span class="sc">+</span> age_c,</span>
+<span id="cb27-3"><a></a>  <span class="at">family =</span> <span class="fu">acat</span>(<span class="st">"probit"</span>),</span>
+<span id="cb27-4"><a></a>  <span class="at">data =</span> emilian,</span>
+<span id="cb27-5"><a></a>  <span class="at">cores =</span> <span class="dv">4</span>,</span>
+<span id="cb27-6"><a></a>  <span class="at">seed =</span> <span class="dv">7263</span>,</span>
+<span id="cb27-7"><a></a>  <span class="at">file =</span> <span class="st">"data/cache/emi_bm_1"</span></span>
+<span id="cb27-8"><a></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="model-summary" class="slide level2">
+<h2>Model summary</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a></a><span class="fu">summary</span>(emi_bm_1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> Family: acat 
+  Links: mu = probit; disc = identity 
+Formula: speak_2 ~ cs(education) + cs(gender) + age_c 
+   Data: emilian (Number of observations: 434) 
+  Draws: 4 chains, each with iter = 2000; warmup = 1000; thin = 1;
+         total post-warmup draws = 4000
+
+Regression Coefficients:
+                      Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS
+Intercept[1]             -0.87      0.43    -1.76    -0.07 1.00     2081
+Intercept[2]              0.34      0.31    -0.28     0.93 1.00     1739
+Intercept[3]             -0.18      0.32    -0.81     0.44 1.00     1561
+Intercept[4]              0.32      0.34    -0.33     1.00 1.00     1912
+age_c                     0.00      0.00     0.00     0.01 1.00     5164
+educationSecondary[1]    -0.02      0.44    -0.93     0.82 1.00     2251
+educationSecondary[2]    -0.03      0.32    -0.64     0.60 1.00     1847
+educationSecondary[3]     0.06      0.33    -0.60     0.71 1.00     1725
+educationSecondary[4]    -0.13      0.35    -0.81     0.56 1.00     2058
+educationBachelor[1]     -0.45      0.48    -1.42     0.49 1.00     2191
+educationBachelor[2]      0.18      0.36    -0.53     0.89 1.00     1953
+educationBachelor[3]     -0.17      0.39    -0.92     0.59 1.00     1719
+educationBachelor[4]     -0.11      0.41    -0.90     0.68 1.00     2139
+educationMastersP[1]     -0.38      0.50    -1.37     0.58 1.00     2559
+educationMastersP[2]      0.29      0.37    -0.42     1.00 1.00     2148
+educationMastersP[3]     -0.07      0.38    -0.82     0.67 1.00     1917
+educationMastersP[4]      0.03      0.39    -0.73     0.79 1.00     2198
+genderM[1]                0.50      0.26     0.01     1.03 1.00     4173
+genderM[2]               -0.18      0.18    -0.54     0.17 1.00     2927
+genderM[3]                0.13      0.19    -0.23     0.51 1.00     2632
+genderM[4]                0.28      0.19    -0.09     0.65 1.00     3415
+                      Tail_ESS
+Intercept[1]              2253
+Intercept[2]              1985
+Intercept[3]              1964
+Intercept[4]              2311
+age_c                     2685
+educationSecondary[1]     2447
+educationSecondary[2]     2515
+educationSecondary[3]     2257
+educationSecondary[4]     2309
+educationBachelor[1]      2482
+educationBachelor[2]      2585
+educationBachelor[3]      2161
+educationBachelor[4]      2491
+educationMastersP[1]      2803
+educationMastersP[2]      2719
+educationMastersP[3]      2457
+educationMastersP[4]      2499
+genderM[1]                2754
+genderM[2]                2213
+genderM[3]                2519
+genderM[4]                2907
+
+Further Distributional Parameters:
+     Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
+disc     1.00      0.00     1.00     1.00   NA       NA       NA
+
+Draws were sampled using sampling(NUTS). For each parameter, Bulk_ESS
+and Tail_ESS are effective sample size measures, and Rhat is the potential
+scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
+</div>
+</div>
+</section>
+<section id="expected-probabilities-by-gender" class="slide level2">
+<h2>Expected probabilities by gender</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a></a><span class="fu">conditional_effects</span>(emi_bm_1, <span class="at">effects =</span> <span class="st">"gender"</span>, <span class="at">categorical =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+
+</div>
+<img data-src="slides_files/figure-revealjs/unnamed-chunk-24-1.png" width="960" class="r-stretch"></section>
+<section id="expected-probabilities-by-education" class="slide level2">
+<h2>Expected probabilities by education</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a></a><span class="fu">conditional_effects</span>(emi_bm_1, <span class="at">effects =</span> <span class="st">"education"</span>, <span class="at">categorical =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+
+</div>
+<img data-src="slides_files/figure-revealjs/unnamed-chunk-25-1.png" width="960" class="r-stretch"></section>
+<section id="expected-probabilities-by-age" class="slide level2">
+<h2>Expected probabilities by age</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a></a><span class="fu">conditional_effects</span>(emi_bm_1, <span class="at">effects =</span> <span class="st">"age_c"</span>, <span class="at">categorical =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+
+</div>
+<img data-src="slides_files/figure-revealjs/unnamed-chunk-26-1.png" width="960" class="r-stretch"></section>
+<section id="resources" class="slide level2">
+<h2>Resources</h2>
+<div class="box-note">
+<ul>
+<li><p>Bürkner, Paul-Christian, and Matti Vuorre. ‘Ordinal Regression Models in Psychology: A Tutorial’. Advances in Methods and Practices in Psychological Science 2, no. 1 (2019): 77–101. <a href="https://doi.org/10.1177/2515245918823199." class="uri">https://doi.org/10.1177/2515245918823199.</a></p></li>
+<li><p>Verissimo, Joao. ‘Analysis of Rating Scales: A Pervasive Problem in Bilingualism Research and a Solution with Bayesian Ordinal Models’. Bilingualism: Language and Cognition 24, no. 5 (2021): 842–48. <a href="https://doi.org/10.1017/S1366728921000316." class="uri">https://doi.org/10.1017/S1366728921000316.</a></p></li>
+<li><p><a href="https://solomonkurz.netlify.app/blog/2021-12-29-notes-on-the-bayesian-cumulative-probit/">Notes on the Bayesian cumulative probit</a></p></li>
+<li><p><a href="https://discourse.mc-stan.org/t/adjacent-category-probit-ordinal-models-expected-predictions/38415?u=stefanoc88">Adjacent category probit ordinal models expected predictions</a></p></li>
+</ul>
+</div>
+
+
+</section>
+    </div>
+  <div class="quarto-auto-generated-content" style="display: none;">
+<div class="footer footer-default">
+
+</div>
+</div></div>
+
+  <script>window.backupDefine = window.define; window.define = undefined;</script>
+  <script src="../site_libs/revealjs/dist/reveal.js"></script>
+  <!-- reveal.js plugins -->
+  <script src="../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.js"></script>
+  <script src="../site_libs/revealjs/plugin/pdf-export/pdfexport.js"></script>
+  <script src="../site_libs/revealjs/plugin/reveal-menu/menu.js"></script>
+  <script src="../site_libs/revealjs/plugin/reveal-menu/quarto-menu.js"></script>
+  <script src="../site_libs/revealjs/plugin/quarto-support/support.js"></script>
+  
+
+  <script src="../site_libs/revealjs/plugin/notes/notes.js"></script>
+  <script src="../site_libs/revealjs/plugin/search/search.js"></script>
+  <script src="../site_libs/revealjs/plugin/zoom/zoom.js"></script>
+  <script src="../site_libs/revealjs/plugin/math/math.js"></script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://revealjs.com/config/
+      Reveal.initialize({
+'controlsAuto': true,
+'previewLinksAuto': false,
+'pdfSeparateFragments': false,
+'autoAnimateEasing': "ease",
+'autoAnimateDuration': 1,
+'autoAnimateUnmatched': true,
+'jumpToSlide': true,
+'menu': {"side":"left","useTextContentForMissingTitles":true,"markers":false,"loadIcons":false,"custom":[{"title":"Tools","icon":"<i class=\"fas fa-gear\"></i>","content":"<ul class=\"slide-menu-items\">\n<li class=\"slide-tool-item active\" data-item=\"0\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.fullscreen(event)\"><kbd>f</kbd> Fullscreen</a></li>\n<li class=\"slide-tool-item\" data-item=\"1\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.speakerMode(event)\"><kbd>s</kbd> Speaker View</a></li>\n<li class=\"slide-tool-item\" data-item=\"2\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.overview(event)\"><kbd>o</kbd> Slide Overview</a></li>\n<li class=\"slide-tool-item\" data-item=\"3\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.togglePdfExport(event)\"><kbd>e</kbd> PDF Export Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"4\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleScrollView(event)\"><kbd>r</kbd> Scroll View Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"5\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.keyboardHelp(event)\"><kbd>?</kbd> Keyboard Help</a></li>\n</ul>"}],"openButton":true},
+'smaller': false,
+ 
+        // Display controls in the bottom right corner
+        controls: false,
+
+        // Help the user learn the controls by providing hints, for example by
+        // bouncing the down arrow when they first encounter a vertical slide
+        controlsTutorial: false,
+
+        // Determines where controls appear, "edges" or "bottom-right"
+        controlsLayout: 'edges',
+
+        // Visibility rule for backwards navigation arrows; "faded", "hidden"
+        // or "visible"
+        controlsBackArrows: 'faded',
+
+        // Display a presentation progress bar
+        progress: true,
+
+        // Display the page number of the current slide
+        slideNumber: 'c/t',
+
+        // 'all', 'print', or 'speaker'
+        showSlideNumber: 'all',
+
+        // Add the current slide number to the URL hash so that reloading the
+        // page/copying the URL will return you to the same slide
+        hash: true,
+
+        // Start with 1 for the hash rather than 0
+        hashOneBasedIndex: false,
+
+        // Flags if we should monitor the hash and change slides accordingly
+        respondToHashChanges: true,
+
+        // Push each slide change to the browser history
+        history: false,
+
+        // Enable keyboard shortcuts for navigation
+        keyboard: true,
+
+        // Enable the slide overview mode
+        overview: true,
+
+        // Disables the default reveal.js slide layout (scaling and centering)
+        // so that you can use custom CSS layout
+        disableLayout: false,
+
+        // Vertical centering of slides
+        center: false,
+
+        // Enables touch navigation on devices with touch input
+        touch: true,
+
+        // Loop the presentation
+        loop: false,
+
+        // Change the presentation direction to be RTL
+        rtl: false,
+
+        // see https://revealjs.com/vertical-slides/#navigation-mode
+        navigationMode: 'linear',
+
+        // Randomizes the order of slides each time the presentation loads
+        shuffle: false,
+
+        // Turns fragments on and off globally
+        fragments: true,
+
+        // Flags whether to include the current fragment in the URL,
+        // so that reloading brings you to the same fragment position
+        fragmentInURL: false,
+
+        // Flags if the presentation is running in an embedded mode,
+        // i.e. contained within a limited portion of the screen
+        embedded: false,
+
+        // Flags if we should show a help overlay when the questionmark
+        // key is pressed
+        help: true,
+
+        // Flags if it should be possible to pause the presentation (blackout)
+        pause: true,
+
+        // Flags if speaker notes should be visible to all viewers
+        showNotes: false,
+
+        // Global override for autoplaying embedded media (null/true/false)
+        autoPlayMedia: null,
+
+        // Global override for preloading lazy-loaded iframes (null/true/false)
+        preloadIframes: null,
+
+        // Number of milliseconds between automatically proceeding to the
+        // next slide, disabled when set to 0, this value can be overwritten
+        // by using a data-autoslide attribute on your slides
+        autoSlide: 0,
+
+        // Stop auto-sliding after user input
+        autoSlideStoppable: true,
+
+        // Use this method for navigation when auto-sliding
+        autoSlideMethod: null,
+
+        // Specify the average time in seconds that you think you will spend
+        // presenting each slide. This is used to show a pacing timer in the
+        // speaker view
+        defaultTiming: null,
+
+        // Enable slide navigation via mouse wheel
+        mouseWheel: false,
+
+        // The display mode that will be used to show slides
+        display: 'block',
+
+        // Hide cursor if inactive
+        hideInactiveCursor: true,
+
+        // Time before the cursor is hidden (in ms)
+        hideCursorTime: 5000,
+
+        // Opens links in an iframe preview overlay
+        previewLinks: false,
+
+        // Transition style (none/fade/slide/convex/concave/zoom)
+        transition: 'none',
+
+        // Transition speed (default/fast/slow)
+        transitionSpeed: 'default',
+
+        // Transition style for full page slide backgrounds
+        // (none/fade/slide/convex/concave/zoom)
+        backgroundTransition: 'none',
+
+        // Number of slides away from the current that are visible
+        viewDistance: 3,
+
+        // Number of slides away from the current that are visible on mobile
+        // devices. It is advisable to set this to a lower number than
+        // viewDistance in order to save resources.
+        mobileViewDistance: 2,
+
+        // The "normal" size of the presentation, aspect ratio will be preserved
+        // when the presentation is scaled to fit different resolutions. Can be
+        // specified using percentage units.
+        width: 1050,
+
+        height: 700,
+
+        // Factor of the display size that should remain empty around the content
+        margin: 0.2,
+
+        math: {
+          mathjax: 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/MathJax.js',
+          config: 'TeX-AMS_HTML-full',
+          tex2jax: {
+            inlineMath: [['\\(','\\)']],
+            displayMath: [['\\[','\\]']],
+            balanceBraces: true,
+            processEscapes: false,
+            processRefs: true,
+            processEnvironments: true,
+            preview: 'TeX',
+            skipTags: ['script','noscript','style','textarea','pre','code'],
+            ignoreClass: 'tex2jax_ignore',
+            processClass: 'tex2jax_process'
+          },
+        },
+
+        // reveal.js plugins
+        plugins: [QuartoLineHighlight, PdfExport, RevealMenu, QuartoSupport,
+
+          RevealMath,
+          RevealNotes,
+          RevealSearch,
+          RevealZoom
+        ]
+      });
+    </script>
+    
+    <script>
+      // htmlwidgets need to know to resize themselves when slides are shown/hidden.
+      // Fire the "slideenter" event (handled by htmlwidgets.js) when the current
+      // slide changes (different for each slide format).
+      (function () {
+        // dispatch for htmlwidgets
+        function fireSlideEnter() {
+          const event = window.document.createEvent("Event");
+          event.initEvent("slideenter", true, true);
+          window.document.dispatchEvent(event);
+        }
+
+        function fireSlideChanged(previousSlide, currentSlide) {
+          fireSlideEnter();
+
+          // dispatch for shiny
+          if (window.jQuery) {
+            if (previousSlide) {
+              window.jQuery(previousSlide).trigger("hidden");
+            }
+            if (currentSlide) {
+              window.jQuery(currentSlide).trigger("shown");
+            }
+          }
+        }
+
+        // hookup for slidy
+        if (window.w3c_slidy) {
+          window.w3c_slidy.add_observer(function (slide_num) {
+            // slide_num starts at position 1
+            fireSlideChanged(null, w3c_slidy.slides[slide_num - 1]);
+          });
+        }
+
+      })();
+    </script>
+
+    <script id="quarto-html-after-body" type="application/javascript">
+    window.document.addEventListener("DOMContentLoaded", function (event) {
+      const toggleBodyColorMode = (bsSheetEl) => {
+        const mode = bsSheetEl.getAttribute("data-mode");
+        const bodyEl = window.document.querySelector("body");
+        if (mode === "dark") {
+          bodyEl.classList.add("quarto-dark");
+          bodyEl.classList.remove("quarto-light");
+        } else {
+          bodyEl.classList.add("quarto-light");
+          bodyEl.classList.remove("quarto-dark");
+        }
+      }
+      const toggleBodyColorPrimary = () => {
+        const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+        if (bsSheetEl) {
+          toggleBodyColorMode(bsSheetEl);
+        }
+      }
+      toggleBodyColorPrimary();  
+      const tabsets =  window.document.querySelectorAll(".panel-tabset-tabby")
+      tabsets.forEach(function(tabset) {
+        const tabby = new Tabby('#' + tabset.id);
+      });
+      const isCodeAnnotation = (el) => {
+        for (const clz of el.classList) {
+          if (clz.startsWith('code-annotation-')) {                     
+            return true;
+          }
+        }
+        return false;
+      }
+      const onCopySuccess = function(e) {
+        // button target
+        const button = e.trigger;
+        // don't keep focus
+        button.blur();
+        // flash "checked"
+        button.classList.add('code-copy-button-checked');
+        var currentTitle = button.getAttribute("title");
+        button.setAttribute("title", "Copied!");
+        let tooltip;
+        if (window.bootstrap) {
+          button.setAttribute("data-bs-toggle", "tooltip");
+          button.setAttribute("data-bs-placement", "left");
+          button.setAttribute("data-bs-title", "Copied!");
+          tooltip = new bootstrap.Tooltip(button, 
+            { trigger: "manual", 
+              customClass: "code-copy-button-tooltip",
+              offset: [0, -8]});
+          tooltip.show();    
+        }
+        setTimeout(function() {
+          if (tooltip) {
+            tooltip.hide();
+            button.removeAttribute("data-bs-title");
+            button.removeAttribute("data-bs-toggle");
+            button.removeAttribute("data-bs-placement");
+          }
+          button.setAttribute("title", currentTitle);
+          button.classList.remove('code-copy-button-checked');
+        }, 1000);
+        // clear code selection
+        e.clearSelection();
+      }
+      const getTextToCopy = function(trigger) {
+          const codeEl = trigger.previousElementSibling.cloneNode(true);
+          for (const childEl of codeEl.children) {
+            if (isCodeAnnotation(childEl)) {
+              childEl.remove();
+            }
+          }
+          return codeEl.innerText;
+      }
+      const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+        text: getTextToCopy
+      });
+      clipboard.on('success', onCopySuccess);
+      if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+        const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+          text: getTextToCopy,
+          container: window.document.getElementById('quarto-embedded-source-code-modal')
+        });
+        clipboardModal.on('success', onCopySuccess);
+      }
+        var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+        var mailtoRegex = new RegExp(/^mailto:/);
+          var filterRegex = new RegExp('/' + window.location.host + '/');
+        var isInternal = (href) => {
+            return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+        }
+        // Inspect non-navigation links and adorn them if external
+     	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+        for (var i=0; i<links.length; i++) {
+          const link = links[i];
+          if (!isInternal(link.href)) {
+            // undo the damage that might have been done by quarto-nav.js in the case of
+            // links that we want to consider external
+            if (link.dataset.originalHref !== undefined) {
+              link.href = link.dataset.originalHref;
+            }
+          }
+        }
+      function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+        const config = {
+          allowHTML: true,
+          maxWidth: 500,
+          delay: 100,
+          arrow: false,
+          appendTo: function(el) {
+              return el.closest('section.slide') || el.parentElement;
+          },
+          interactive: true,
+          interactiveBorder: 10,
+          theme: 'light-border',
+          placement: 'bottom-start',
+        };
+        if (contentFn) {
+          config.content = contentFn;
+        }
+        if (onTriggerFn) {
+          config.onTrigger = onTriggerFn;
+        }
+        if (onUntriggerFn) {
+          config.onUntrigger = onUntriggerFn;
+        }
+          config['offset'] = [0,0];
+          config['maxWidth'] = 700;
+        window.tippy(el, config); 
+      }
+      const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+      for (var i=0; i<noterefs.length; i++) {
+        const ref = noterefs[i];
+        tippyHover(ref, function() {
+          // use id or data attribute instead here
+          let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+          try { href = new URL(href).hash; } catch {}
+          const id = href.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note) {
+            return note.innerHTML;
+          } else {
+            return "";
+          }
+        });
+      }
+      const findCites = (el) => {
+        const parentEl = el.parentElement;
+        if (parentEl) {
+          const cites = parentEl.dataset.cites;
+          if (cites) {
+            return {
+              el,
+              cites: cites.split(' ')
+            };
+          } else {
+            return findCites(el.parentElement)
+          }
+        } else {
+          return undefined;
+        }
+      };
+      var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+      for (var i=0; i<bibliorefs.length; i++) {
+        const ref = bibliorefs[i];
+        const citeInfo = findCites(ref);
+        if (citeInfo) {
+          tippyHover(citeInfo.el, function() {
+            var popup = window.document.createElement('div');
+            citeInfo.cites.forEach(function(cite) {
+              var citeDiv = window.document.createElement('div');
+              citeDiv.classList.add('hanging-indent');
+              citeDiv.classList.add('csl-entry');
+              var biblioDiv = window.document.getElementById('ref-' + cite);
+              if (biblioDiv) {
+                citeDiv.innerHTML = biblioDiv.innerHTML;
+              }
+              popup.appendChild(citeDiv);
+            });
+            return popup.innerHTML;
+          });
+        }
+      }
+    });
+    </script>
+    
+
+</body></html>

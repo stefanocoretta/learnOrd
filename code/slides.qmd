@@ -7,6 +7,7 @@ format:
   mono-light-revealjs:
     theme: [default, "custom.scss"]
     history: false
+    fig-align: center
 filters:
   - tachyonsextra
 execute: 
@@ -21,9 +22,9 @@ execute:
 options(ggplot2.discrete.fill = RColorBrewer::brewer.pal(8, "Dark2"))
 options(ggplot2.discrete.colour = RColorBrewer::brewer.pal(8, "Dark2"))
 
+library(HH)
 library(tidyverse)
 theme_set(theme_minimal())
-library(HH)
 library(brms)
 ```
 
@@ -32,7 +33,7 @@ library(brms)
 #| message: false
 
 acceptability <- read_csv("https://osf.io/download/xmkvg/")
-acceptability
+acceptability |> select(Participant, Condition, Response)
 ```
 
 ## Process data for plotting
@@ -53,7 +54,8 @@ acceptability_lik
 
 ```{r}
 #| label: accept-likert
-#| echo: false
+#| echo: true
+#| fig-align: center
 
 HH::likert(
   Condition ~ .,
@@ -169,7 +171,7 @@ round(acc_bm_2_fixef, 2)
 -   Each "intercept" is the threshold between the Nth level and the following level.
 
     $$
-    Pr(Y = k|Y \in { k, k + 1 }) = \Phi(\tau_k)
+    P(Y = k \mid \eta) = \frac{\exp\left(\sum_{j=1}^{k-1} (\eta - \tau_j)\right)}{\sum_{r=1}^{K+1} \exp\left(\sum_{j=1}^{r-1} (\eta - \tau_j)\right)}
     $$
 
 -   Now, `Condition` has one coefficient per rating-category.
@@ -353,4 +355,6 @@ conditional_effects(emi_bm_1, effects = "age_c", categorical = TRUE)
 -   Verissimo, Joao. ‘Analysis of Rating Scales: A Pervasive Problem in Bilingualism Research and a Solution with Bayesian Ordinal Models’. Bilingualism: Language and Cognition 24, no. 5 (2021): 842–48. <https://doi.org/10.1017/S1366728921000316.>
 
 -   [Notes on the Bayesian cumulative probit](https://solomonkurz.netlify.app/blog/2021-12-29-notes-on-the-bayesian-cumulative-probit/)
+
+- [Adjacent category probit ordinal models expected predictions](https://discourse.mc-stan.org/t/adjacent-category-probit-ordinal-models-expected-predictions/38415?u=stefanoc88)
 :::
