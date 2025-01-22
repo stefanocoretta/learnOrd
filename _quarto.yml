@@ -6,6 +6,9 @@ project:
 website:
   title: "learnOrd"
   navbar:
+    tools:
+      - icon: github
+        href: "https://github.com/stefanocoretta/learnOrd"
     left:
       - href: index.qmd
         text: Home
